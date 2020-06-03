@@ -7,6 +7,6 @@ Instruction:
 2. In Configuration->Integrations add "XComfort SHC"
 3. Lights, switches, shutters and temperature sensors should appear in your HA
 
-Please note only devices from one SHC zone will be added to HA
+Please note only devices from one SHC zone will be added to HA. For zone 1 use hz_1, for 2 use hz_2, etc.
 
-Warning: This integration is not finshed and work is in progress
+<b>Warning</b>: This integration is not finshed and work is still in progress
