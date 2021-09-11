@@ -1,11 +1,11 @@
-# xcomfort
+# xComfort
 Home Assistant Eaton X-comfort SHC integration
 
 
 Installation:
-1. Copy all files to /custom_components/xcomfort and restart your HA
-2. In Configuration->Integrations add "XComfort SHC"
-3. Lights, switches, shutters and temperature sensors should appear in your HA
+  1. Copy all files to /custom_components/xcomfort and restart your HA
+  2. In Configuration->Integrations add "XComfort SHC"
+  3. Lights, switches, shutters and temperature sensors should appear in your HA
 
 or use HACS and add as custom repo.
 
