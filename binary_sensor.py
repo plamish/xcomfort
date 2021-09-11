@@ -1,4 +1,4 @@
-###Version 1.0
+###Version 1.1A
 from homeassistant.helpers.entity import Entity
 from homeassistant.const import STATE_ON, STATE_OFF
 import json
