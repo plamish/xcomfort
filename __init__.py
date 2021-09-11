@@ -1,3 +1,4 @@
+###Version 1.1A
 import async_timeout
 import logging
 
@@ -19,22 +20,25 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, config_entry):
     _LOGGER.debug('Version=%s',VERSION)
+    
     websession = async_get_clientsession(hass)
     coordinator = XCDataUpdateCoordinator(hass, websession, config_entry.data["url"],config_entry.data["zone"],
-    config_entry.data["username"], config_entry.data["password"], config_entry.data["scan_interval"] )
+        config_entry.data["username"], config_entry.data["password"], config_entry.data["scan_interval"])
     await coordinator.xc.connect()
     await coordinator.async_refresh()
     hass.data[DOMAIN] = coordinator
+    
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "light"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "binary_sensor"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "cover"))
+    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "climate"))
     return True
 
 
 class XCDataUpdateCoordinator(DataUpdateCoordinator):
-    def __init__(self, hass, session, url, zone, username, password, scan_interval ):
+    def __init__(self, hass, session, url, zone, username, password, scan_interval,  ):
         stat_interval = 60 // scan_interval
         if stat_interval == 0:
             stat_interval = 1
