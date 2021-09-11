@@ -1,3 +1,4 @@
+###Version 1.1
 import logging
 import json
 import aiohttp
@@ -11,20 +12,24 @@ class xcomfortAPI:
         self.session = session
         self.devices = {}
         self.log_stats = {}
+        self.zones_list = {}
+        self.heating_zones = []
+        self.heating_status = {}
         self.username = username
         self.url = url
         self.zone = zone
         self.password = password
         self.update_counter = 0
         self.stat_interval = stat_interval
-        try:
-            file = open("xcomfort_session","r")
-            self.sessionID = file.read()
-        except IOError:
-            self.is_connected = False
-        else:
-            file.close()
-            self.is_connected = True
+        self.stat_scan_now = False
+        #try:
+        #    file = open("xcomfort_session","r")
+        #    self.sessionID = file.read()
+        #except IOError:
+        #    self.is_connected = False
+        #else:
+        #    file.close()
+        #    self.is_connected = True
 
     async def connect(self):
         _LOGGER.debug("connect()")
@@ -52,7 +57,7 @@ class xcomfortAPI:
             file.close()
 
     async def query(self, method, params=['', '']):
-        _LOGGER.debug("xcomfort.query(%s)",method)
+        #_LOGGER.debug("query(%s)",method)
         rpc_headers = {
             'Cookie':self.sessionID,
             'Accept-Encoding': 'gzip, deflate',
@@ -92,21 +97,68 @@ class xcomfortAPI:
         if 'result' not in response:
             response['result'] = [{}]
         return response['result']
+        
+    def add_heating_zone(self, zone):
+        self.heating_zones.append(zone)
+        _LOGGER.debug("add_heating_zone zone=%s",zone)
 
     async def get_statuses(self):
         self.update_counter +=1
-        _LOGGER.debug("get_statuses() counter=%d, stat_interval=%d",self.update_counter,self.stat_interval)
+        #_LOGGER.debug("get_statuses() counter=%d, stat_interval=%d",self.update_counter,self.stat_interval)
         self.devices = await self.query('StatusControlFunction/getDevices', params=[self.zone, ''])
-        if self.update_counter >= self.stat_interval:
+        if (self.update_counter >= self.stat_interval) or self.stat_scan_now:
             self.update_counter = 0
+            self.stat_scan_now = False
             self.log_stats = await self.query('Diagnostics/getPhysicalDevicesWithLogStats')
+            for zone in self.heating_zones:
+                results = await self.query('ClimateFunction/getZoneOverview',[zone])
+                _target_temp = float(results[0]['overview'][0]['setpoint'])
+                _heating = results[0]['overview'][0]['typeId']
+                x = { zone:{'heating':_heating,"setpoint":_target_temp}}
+                self.heating_status.update(x)
+        
         return True
-
+        
+        
+        
+    async def get_zones(self):
+        _LOGGER.debug("get_zones()")
+        self.zones_list = await self.query('HFM/getZones', params=[''])
+        return True
+    
     async def switch(self, dev_id, state):
         result = await self.query('StatusControlFunction/controlDevice', params=[self.zone, dev_id, state])
         if not result['status'] == 'ok':
             return False
         else:
+            return True
+
+    async def set_temperture(self, zone_id, temp):
+        _LOGGER.debug("set_temperture %s %s ",zone_id,str(temp))
+        result = await self.query('ClimateFunction/setSetpoint', [zone_id, str(temp)])
+        if not result['status'] == 'ok':
+            _LOGGER.debug("set_temperture %s UNsuccess",zone_id)
+            return False
+        else:
+            _LOGGER.debug("set_temperture %s success",zone_id)
+            self.heating_status[zone_id]['setpoint']=temp
+            self.stat_scan_now = True
+            return True
+            
+            
+    async def set_heatingmode(self, zone_id, mode):
+        if mode:
+            _mode = 'heating'
+        else:
+            _mode = 'off'
+        result = await self.query('ClimateFunction/setControlType', [zone_id, _mode])
+        if not result['status'] == 'ok':
+            _LOGGER.debug("set_heatingmode %s UNsuccess",zone_id)
+            return False
+        else:
+            _LOGGER.debug("set_heatingmode %s success",zone_id)
+            self.heating_status[zone_id]['heating']=mode
+            self.stat_scan_now = True
             return True
 
     async def update(self):

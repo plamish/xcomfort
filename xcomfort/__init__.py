@@ -1,4 +1,4 @@
-###Version 1.1A
+###Version 1.1
 import async_timeout
 import logging
 
@@ -31,7 +31,6 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "light"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))
-    #hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "binary_sensor"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "cover"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "climate"))
     return True

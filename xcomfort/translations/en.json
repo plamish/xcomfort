@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "XComfort SHC",
+        "description": "Set up X-Comfort SHC",
+        "data": {
+          "url": "URL of SHC device",
+          "name": "Name of integration",
+          "username": "Login username",
+          "password": "Login password",
+          "zone": "Zone",
+          "scan_interval": "Refrash interval (s)",
+          "heating_zone0": "Heating Zone 0",
+          "heating_zone0_radiator": "Haating Zone 0 RM",
+          "heating_zone1": "Heating Zone 1",
+          "heating_zone1_radiator": "Haating Zone 1 radiator",
+          "heating_zone2": "Heating Zone 2",
+          "heating_zone2_radiator": "Haating Zone 2 radiator",
+          "heating_zone3": "Heating Zone 3",
+          "heating_zone3_radiator": "Haating Zone 3 radiator",
+          "heating_zone4": "Heating Zone 4",
+          "heating_zone4_radiator": "Haating Zone 4 radiator",
+          "heating_zone5": "Heating Zone 5",
+          "heating_zone5_radiator": "Haating Zone 5 radiator",
+          "heating_zone6": "Heating Zone 6",
+          "heating_zone_radiator": "Haating Zone 6 radiator"
+        }
+      }
+    }
+  }
+}

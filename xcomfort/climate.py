@@ -1,4 +1,4 @@
-###Version 1.1A
+###Version 1.1
 import json
 import logging
 import asyncio
@@ -264,6 +264,35 @@ class xcThermostat(ClimateEntity):
                 
         #self.async_write_ha_state()
         
+
+            
+
+
+ #   def _update_internal_state(self):
+  #      _status = self.coordinator.xc.heating_status[self._heating_zone]
+   #     self._target_temp = float(_status['setpoint'])
+    #    _heating = _status['heating']
+        
+    #    _LOGGER.error("async_update() zone=%s settemp=%s heating=%s",self._heating_zone, self._target_temp,_heating)
+     #   if bool(_heating=='heating'):
+      #      self._hvac_mode = HVAC_MODE_HEAT
+       # else:
+       #     self._hvac_mode = HVAC_MODE_OFF
+
+
+#    async def async_update(self):
+#
+ #       _status = self.coordinator.xc.heating_status[self._heating_zone]
+ #       self._target_temp = float(_status['setpoint'])
+  #      _heating = _status['heating']
+        
+    #    _LOGGER.error("async_update() zone=%s settemp=%s heating=%s",self._heating_zone, self._target_temp,_heating)
+   #     if bool(_heating=='heating'):
+     #       self._hvac_mode = HVAC_MODE_HEAT
+      #  else:
+      #      self._hvac_mode = HVAC_MODE_OFF
+        
+       # self.async_write_ha_state()
 
 
     async def async_added_to_hass(self):
