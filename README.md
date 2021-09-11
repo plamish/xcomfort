@@ -1,5 +1,5 @@
 # xComfort
-Home Assistant Eaton X-comfort SHC integration
+Home Assistant Eaton xComfort SHC integration
 
 
 Installation:
