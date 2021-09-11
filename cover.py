@@ -1,17 +1,17 @@
-###Version 1.01
+###Version 1.1A
 from homeassistant.components.cover import (
     SUPPORT_CLOSE,
     SUPPORT_OPEN,
     SUPPORT_STOP,
     CoverEntity,
 )
+
 import json
 import logging
 import asyncio
 
 from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
-
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     coordinator = hass.data[DOMAIN]
