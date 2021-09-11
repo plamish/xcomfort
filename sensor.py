@@ -1,4 +1,4 @@
-###Version 1.0
+###Version 1.1A
 from homeassistant.helpers.entity import Entity
 from homeassistant.const import TEMP_CELSIUS
 import json
