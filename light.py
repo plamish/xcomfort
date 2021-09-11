@@ -1,4 +1,4 @@
-###Version 1.01
+###Version 1.1A
 from homeassistant.components.light import (ATTR_BRIGHTNESS,ATTR_BRIGHTNESS_PCT, SUPPORT_BRIGHTNESS, LightEntity)
 import json
 import logging
