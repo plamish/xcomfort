@@ -4,6 +4,6 @@
   "config_flow": true,
   "version": "1.1",
   "documentation": "https://github.com/plamish/xcomfort",
-  "issue_tracker": "https://github.com/plamish/xcomfort/issues"
-   "codeowners": ["@plamish"]
+  "issue_tracker": "https://github.com/plamish/xcomfort/issues",
+  "codeowners": ["@plamish"]
 }
