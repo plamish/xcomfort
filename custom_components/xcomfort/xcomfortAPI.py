@@ -1,4 +1,4 @@
-###Version 1.1
+###Version 1.11
 import logging
 import json
 import aiohttp
@@ -22,6 +22,7 @@ class xcomfortAPI:
         self.update_counter = 0
         self.stat_interval = stat_interval
         self.stat_scan_now = False
+        self.is_connected = False
         #try:
         #    file = open("xcomfort_session","r")
         #    self.sessionID = file.read()
@@ -36,7 +37,7 @@ class xcomfortAPI:
         if not self.is_connected:
             headers = {'User-Agent': 'Mozilla/5.0'}
             auth = aiohttp.BasicAuth(login=self.username, password=self.password)
-            
+
             async with self.session.get(self.url, auth=auth) as response:
                 _LOGGER.debug("connect() response.status=%d",response.status)
                 if response.status != 200:
@@ -97,7 +98,7 @@ class xcomfortAPI:
         if 'result' not in response:
             response['result'] = [{}]
         return response['result']
-        
+
     def add_heating_zone(self, zone):
         self.heating_zones.append(zone)
         _LOGGER.debug("add_heating_zone zone=%s",zone)
@@ -116,16 +117,16 @@ class xcomfortAPI:
                 _heating = results[0]['overview'][0]['typeId']
                 x = { zone:{'heating':_heating,"setpoint":_target_temp}}
                 self.heating_status.update(x)
-        
+
         return True
-        
-        
-        
+
+
+
     async def get_zones(self):
         _LOGGER.debug("get_zones()")
         self.zones_list = await self.query('HFM/getZones', params=[''])
         return True
-    
+
     async def switch(self, dev_id, state):
         result = await self.query('StatusControlFunction/controlDevice', params=[self.zone, dev_id, state])
         if not result['status'] == 'ok':
@@ -144,8 +145,8 @@ class xcomfortAPI:
             self.heating_status[zone_id]['setpoint']=temp
             self.stat_scan_now = True
             return True
-            
-            
+
+
     async def set_heatingmode(self, zone_id, mode):
         if mode:
             _mode = 'heating'
