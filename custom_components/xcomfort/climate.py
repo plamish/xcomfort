@@ -1,4 +1,4 @@
-###Version 1.1
+###Version 1.2
 import json
 import logging
 import asyncio
@@ -49,22 +49,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     try:
         if config_entry.data["heating_zone0"]!='':
             zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone0"])['zoneName']
-            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone0_radiator"], 
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone0_radiator"],
                 zone_name, config_entry.data["heating_zone0"], True)])
     except:
-        pass    
+        pass
 
     try:
         if config_entry.data["heating_zone1"]!='':
             zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone1"])['zoneName']
-            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone1_radiator"],  
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone1_radiator"],
                 zone_name, config_entry.data["heating_zone1"], False)])
     except:
         pass
     try:
         if config_entry.data["heating_zone2"]!='':
             zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone2"])['zoneName']
-            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone2_radiator"], 
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone2_radiator"],
                 zone_name, config_entry.data["heating_zone2"], False)])
 
     except:
@@ -73,15 +73,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     try:
         if config_entry.data["heating_zone3"]!='':
             zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone3"])['zoneName']
-            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone3_radiator"], 
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone3_radiator"],
                 zone_name, config_entry.data["heating_zone3"], False)])
     except:
         pass
- 
+
     try:
         if config_entry.data["heating_zone4"]!='':
             zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone4"])['zoneName']
-            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone4_radiator"], 
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone4_radiator"],
                 zone_name, config_entry.data["heating_zone4"], False)])
     except:
         pass
@@ -89,7 +89,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     try:
         if config_entry.data["heating_zone5"]!='':
             zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone5"])['zoneName']
-            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone5_radiator"], 
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone5_radiator"],
                 zone_name, config_entry.data["heating_zone5"], False)])
     except:
         pass
@@ -97,11 +97,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     try:
         if config_entry.data["heating_zone6"]!='':
             zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone6"])['zoneName']
-            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone6_radiator"], 
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone6_radiator"],
                 zone_name, config_entry.data["heating_zone6"], False)])
     except:
         pass
-    
+
 class xcThermostat(ClimateEntity):
     def __init__(self, coordinator, id, name, heating_zone, rm):
         self.id = id
@@ -117,10 +117,10 @@ class xcThermostat(ClimateEntity):
         self._heating_zone = heating_zone
         self._rm = rm
         coordinator.xc.add_heating_zone(heating_zone)
-        
+
         #_LOGGER.debug("init()  id= %s", self.id)
         #_LOGGER.debug("init()  heating_zones= %s", self.coordinator.xc.heating_zones)
-        
+
 
 
 
@@ -133,25 +133,25 @@ class xcThermostat(ClimateEntity):
                 return "mdi:thermometer-off"
         else:
             return "mdi:exclamation-thick"
-            
+
     @property
     def name(self):
         return self._name
-        
+
     @property
     def unique_id(self):
         return self._unique_id
 
-        
+
     @property
     def should_poll(self):
         return False
-        
+
     @property
     def is_on(self):
         return True
 
-    
+
     @property
     def target_temperature_step(self):
         return PRECISION_HALVES
@@ -160,7 +160,7 @@ class xcThermostat(ClimateEntity):
     def supported_features(self):
         """Return the supported features."""
         return SUPPORT_TARGET_TEMPERATURE
-        
+
     @property
     def temperature_unit(self):
         return TEMP_CELSIUS
@@ -172,13 +172,13 @@ class xcThermostat(ClimateEntity):
 
     @property
     def min_temp(self):
-        return 10        
-  
-  
+        return 10
+
+
     @property
     def _is_device_active(self):
-        return bool(self.temp_pos>0)        
-        
+        return bool(self.temp_pos>0)
+
     @property
     def available(self):
         return True
@@ -186,7 +186,7 @@ class xcThermostat(ClimateEntity):
     @property
     def target_temperature(self):
         _LOGGER.debug("target_temperature  heating_status=%s", self.coordinator.xc.heating_status)
-        
+
         if self._hvac_mode == HVAC_MODE_HEAT:
             if self.coordinator.xc.heating_status!={}:
                 _status = self.coordinator.xc.heating_status[self._heating_zone]
@@ -196,7 +196,7 @@ class xcThermostat(ClimateEntity):
                     return None
             else:
                 return None
-                
+
     @property
     def current_temperature(self):
         if self._rm:
@@ -206,7 +206,7 @@ class xcThermostat(ClimateEntity):
                 return temp
             except:
                 return None
-        else:   
+        else:
             try:
                 dev = next(x for x in self.coordinator.data if x['id']=='xCo:'+self.id+'_u0')
                 temp = float(dev['value'])
@@ -217,7 +217,7 @@ class xcThermostat(ClimateEntity):
     @property
     def hvac_modes(self):
         return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
-        
+
     @property
     def hvac_mode(self):
         return self._hvac_mode
@@ -256,23 +256,23 @@ class xcThermostat(ClimateEntity):
             _hvac_mode = True
         else:
             _hvac_mode = False
-            
+
         if await self.coordinator.xc.set_heatingmode(self._heating_zone, _hvac_mode):
             self._hvac_mode = hvac_mode
         else:
             LOGGER.error("Can't set hvac mode %s", self._heating_zone)
-                
-        #self.async_write_ha_state()
-        
 
-            
+        #self.async_write_ha_state()
+
+
+
 
 
  #   def _update_internal_state(self):
   #      _status = self.coordinator.xc.heating_status[self._heating_zone]
    #     self._target_temp = float(_status['setpoint'])
     #    _heating = _status['heating']
-        
+
     #    _LOGGER.error("async_update() zone=%s settemp=%s heating=%s",self._heating_zone, self._target_temp,_heating)
      #   if bool(_heating=='heating'):
       #      self._hvac_mode = HVAC_MODE_HEAT
@@ -285,13 +285,13 @@ class xcThermostat(ClimateEntity):
  #       _status = self.coordinator.xc.heating_status[self._heating_zone]
  #       self._target_temp = float(_status['setpoint'])
   #      _heating = _status['heating']
-        
+
     #    _LOGGER.error("async_update() zone=%s settemp=%s heating=%s",self._heating_zone, self._target_temp,_heating)
    #     if bool(_heating=='heating'):
      #       self._hvac_mode = HVAC_MODE_HEAT
       #  else:
       #      self._hvac_mode = HVAC_MODE_OFF
-        
+
        # self.async_write_ha_state()
 
 
@@ -300,5 +300,3 @@ class xcThermostat(ClimateEntity):
         self.async_on_remove(
             self.coordinator.async_add_listener(self.async_write_ha_state)
         )
-
-

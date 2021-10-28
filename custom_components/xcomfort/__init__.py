@@ -1,4 +1,4 @@
-###Version 1.1
+###Version 1.2
 import async_timeout
 import logging
 
@@ -20,14 +20,14 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, config_entry):
     _LOGGER.debug('Version=%s',VERSION)
-    
+
     websession = async_get_clientsession(hass)
     coordinator = XCDataUpdateCoordinator(hass, websession, config_entry.data["url"],config_entry.data["zone"],
         config_entry.data["username"], config_entry.data["password"], config_entry.data["scan_interval"])
     await coordinator.xc.connect()
     await coordinator.async_refresh()
     hass.data[DOMAIN] = coordinator
-    
+
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "light"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))

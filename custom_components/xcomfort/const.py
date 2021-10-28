@@ -1,3 +1,3 @@
 DEFAULT_NAME = "XComfort SHC"
 DOMAIN = "xcomfort"
-VERSION = "1.1"
+VERSION = "1.2"

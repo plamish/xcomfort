@@ -1,4 +1,4 @@
-###Version 1.11
+###Version 1.2
 import logging
 import json
 import aiohttp
@@ -107,6 +107,7 @@ class xcomfortAPI:
         self.update_counter +=1
         #_LOGGER.debug("get_statuses() counter=%d, stat_interval=%d",self.update_counter,self.stat_interval)
         self.devices = await self.query('StatusControlFunction/getDevices', params=[self.zone, ''])
+        _LOGGER.debug("get_statuses() self.devices=%s", self.devices)
         if (self.update_counter >= self.stat_interval) or self.stat_scan_now:
             self.update_counter = 0
             self.stat_scan_now = False
