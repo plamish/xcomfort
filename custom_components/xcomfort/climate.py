@@ -1,4 +1,4 @@
-###Version 1.2
+###Version 1.3
 import json
 import logging
 import asyncio
@@ -231,7 +231,7 @@ class xcThermostat(ClimateEntity):
 
 
     @property
-    def device_state_attributes(self):
+    def state_attributes(self):
         stats_id = str('xCo:'+self.id+'_vp').replace('xCo','hdm:xComfort Adapter')
         try:
             self.last_message_time = self.coordinator.xc.log_stats[stats_id]['lastMsgTimeStamp']

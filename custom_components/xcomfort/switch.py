@@ -1,4 +1,4 @@
-###Version 1.2
+###Version 1.3
 from homeassistant.components.switch import SwitchEntity
 import json
 import logging
@@ -35,9 +35,9 @@ class xcSwitch(SwitchEntity):
         return self._unique_id
 
     @property
-    def device_state_attributes(self):
+    def state_attributes(self):
         stats_id = str(self._unique_id).replace('xCo','hdm:xComfort Adapter')
-        #_LOGGER.debug("xcSwitch.device_state_attributes() stats_id=%s", stats_id)
+        #_LOGGER.debug("xcSwitch.state_attributes() stats_id=%s", stats_id)
         try:
             self.last_message_time = self.coordinator.xc.log_stats[stats_id]['lastMsgTimeStamp']
         except:
@@ -45,7 +45,7 @@ class xcSwitch(SwitchEntity):
             self.messages_per_day = ''
         else:
             self.messages_per_day = self.coordinator.xc.log_stats[stats_id]['msgsPerDay']
-        #_LOGGER.debug("xcSwitch.device_state_attributes() self.messages_per_day=%s", self.messages_per_day)
+        #_LOGGER.debug("xcSwitch.state_attributes() self.messages_per_day=%s", self.messages_per_day)
         return {"Messeges per day": self.messages_per_day, "Last message": self.last_message_time}
 
 

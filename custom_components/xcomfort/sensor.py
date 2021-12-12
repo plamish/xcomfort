@@ -1,4 +1,4 @@
-###Version 1.2
+###Version 1.3
 from homeassistant.helpers.entity import Entity
 from homeassistant.const import TEMP_CELSIUS
 import json
@@ -61,7 +61,7 @@ class xcTemperature(Entity):
         return  self._unit_of_measurement
 
     @property
-    def device_state_attributes(self):
+    def state_attributes(self):
 
         stats_id = str(self._unique_id).replace('xCo','hdm:xComfort Adapter')
         try:
