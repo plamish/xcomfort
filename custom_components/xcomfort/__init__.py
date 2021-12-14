@@ -1,4 +1,4 @@
-###Version 1.3
+###Version 1.3.1
 import async_timeout
 import logging
 
@@ -12,14 +12,10 @@ from .xcomfortAPI import xcomfortAPI
 from .const import DOMAIN, VERSION
 _LOGGER = logging.getLogger(__name__)
 
-
-
 async def async_setup(hass, config):
     return True
 
-
 async def async_setup_entry(hass, config_entry):
-    _LOGGER.debug('Version=%s',VERSION)
 
     websession = async_get_clientsession(hass)
     coordinator = XCDataUpdateCoordinator(hass, websession, config_entry.data["url"],config_entry.data["zone"],
@@ -33,8 +29,12 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "cover"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "climate"))
-    return True
 
+    async def async_service1(service_call):
+        await coordinator.xc.debug()
+
+    hass.services.async_register(DOMAIN,"save_status_files",async_service1,)
+    return True
 
 class XCDataUpdateCoordinator(DataUpdateCoordinator):
     def __init__(self, hass, session, url, zone, username, password, scan_interval,  ):

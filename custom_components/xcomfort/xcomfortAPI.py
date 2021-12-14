@@ -1,4 +1,4 @@
-###Version 1.3
+###Version 1.3.1
 import logging
 import json
 import aiohttp
@@ -101,27 +101,28 @@ class xcomfortAPI:
 
     def add_heating_zone(self, zone):
         self.heating_zones.append(zone)
+        self.stat_scan_now = True
         _LOGGER.debug("add_heating_zone zone=%s",zone)
 
     async def get_statuses(self):
-        self.update_counter +=1
-        #_LOGGER.debug("get_statuses() counter=%d, stat_interval=%d",self.update_counter,self.stat_interval)
+        _LOGGER.debug("get_statuses() counter=%d, stat_interval=%d",self.update_counter,self.stat_interval)
         self.devices = await self.query('StatusControlFunction/getDevices', params=[self.zone, ''])
-        _LOGGER.debug("get_statuses() self.devices=%s", self.devices)
-        if (self.update_counter >= self.stat_interval) or self.stat_scan_now:
-            self.update_counter = 0
+        #_LOGGER.debug("get_statuses() self.devices=%s", self.devices)
+        if (self.update_counter <= 0) or self.stat_scan_now:
+            _LOGGER.debug("get_statuses() update_counter <= 0")
+            self.update_counter = self.stat_interval
             self.stat_scan_now = False
             self.log_stats = await self.query('Diagnostics/getPhysicalDevicesWithLogStats')
             for zone in self.heating_zones:
+                #_LOGGER.debug("get_statuses() zone=%s", zone)
                 results = await self.query('ClimateFunction/getZoneOverview',[zone])
                 _target_temp = float(results[0]['overview'][0]['setpoint'])
                 _heating = results[0]['overview'][0]['typeId']
                 x = { zone:{'heating':_heating,"setpoint":_target_temp}}
+                #_LOGGER.debug("get_statuses() x=%s", x)
                 self.heating_status.update(x)
-
+        self.update_counter -=1
         return True
-
-
 
     async def get_zones(self):
         _LOGGER.debug("get_zones()")
@@ -146,7 +147,6 @@ class xcomfortAPI:
             self.heating_status[zone_id]['setpoint']=temp
             self.stat_scan_now = True
             return True
-
 
     async def set_heatingmode(self, zone_id, mode):
         if mode:
@@ -188,5 +188,13 @@ class xcomfortAPI:
 
     @property
     def available(self):
-        """Return True is data is available."""
+        """Return True if data is available."""
         return bool(self.devices)
+
+    async def debug(self):
+        file = open("xcomfort_devices", "w")
+        file.write(json.dumps(self.devices, indent=4))
+        file.close()
+        file = open("xcomfort_log_stats", "w")
+        file.write(json.dumps(self.log_stats, indent=4))
+        file.close()

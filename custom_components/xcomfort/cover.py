@@ -1,4 +1,4 @@
-###Version 1.3
+###Version 1.3.1
 from homeassistant.components.cover import (
     SUPPORT_CLOSE,
     SUPPORT_OPEN,
@@ -56,7 +56,7 @@ class xcShutter(CoverEntity):
         return self._unique_id
 
     @property
-    def state_attributes(self):
+    def extra_state_attributes(self):
         stats_id = str(self._unique_id).replace('xCo','hdm:xComfort Adapter')
         try:
             self.last_message_time = self.coordinator.xc.log_stats[stats_id]['lastMsgTimeStamp']

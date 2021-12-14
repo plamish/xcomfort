@@ -1,9 +1,11 @@
-###Version 1.3
+###Version 1.3.1
 import json
 import logging
 import asyncio
 
+from homeassistant.core import callback
 from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from homeassistant.const import TEMP_CELSIUS
 
@@ -102,136 +104,100 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     except:
         pass
 
-class xcThermostat(ClimateEntity):
+class xcThermostat(CoordinatorEntity, ClimateEntity):
+    _attr_target_temperature_step = PRECISION_HALVES
+    _attr_hvac_mode= None
+    _attr_hvac_modes = [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+    _attr_supported_features = SUPPORT_TARGET_TEMPERATURE
+    _attr_temperature_unit = TEMP_CELSIUS
+    _attr_max_temp = 24
+    _attr_min_temp = 12
+
     def __init__(self, coordinator, id, name, heating_zone, rm):
+        super().__init__(coordinator)
         self.id = id
-        self._name = name
-        self._unique_id = 'climate'+id
+        self._attr_unique_id = 'climate'+id
+        self._attr_name = name
         self.coordinator = coordinator
         self.last_message_time = ''
         self.messages_per_day = ''
         self.temp_pos = 0
-        self._hvac_mode = HVAC_MODE_HEAT
         self._active = False
         self._cur_temp = None
         self._heating_zone = heating_zone
         self._rm = rm
         coordinator.xc.add_heating_zone(heating_zone)
-
-        #_LOGGER.debug("init()  id= %s", self.id)
-        #_LOGGER.debug("init()  heating_zones= %s", self.coordinator.xc.heating_zones)
-
+        self._update_attr()
 
 
 
     @property
     def icon(self):
-        if self.available:
-            if self.is_on:
-                return "mdi:thermometer-lines"
-            else:
-                return "mdi:thermometer-off"
+        return "mdi:thermometer-lines"
+        #else:
+            #return "mdi:thermometer-off"
+         #   return "mdi:exclamation-thick"
+
+
+    async def async_set_temperature(self, **kwargs):
+        await self.coordinator.xc.set_temperture(self._heating_zone, kwargs.get(ATTR_TEMPERATURE))
+        self.async_write_ha_state()
+
+    async def async_set_hvac_mode(self, hvac_mode):
+        if hvac_mode == HVAC_MODE_HEAT:
+            _hvac_mode = True
         else:
-            return "mdi:exclamation-thick"
+            _hvac_mode = False
+        if await self.coordinator.xc.set_heatingmode(self._heating_zone, _hvac_mode):
+            self._hvac_mode = hvac_mode
+        else:
+            _LOGGER.error("Can't set hvac mode %s", self._heating_zone)
+        self.async_write_ha_state()
 
-    @property
-    def name(self):
-        return self._name
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        self._update_attr()
+        self.async_write_ha_state()
 
-    @property
-    def unique_id(self):
-        return self._unique_id
-
-
-    @property
-    def should_poll(self):
-        return False
-
-    @property
-    def is_on(self):
-        return True
-
-
-    @property
-    def target_temperature_step(self):
-        return PRECISION_HALVES
-
-    @property
-    def supported_features(self):
-        """Return the supported features."""
-        return SUPPORT_TARGET_TEMPERATURE
-
-    @property
-    def temperature_unit(self):
-        return TEMP_CELSIUS
-
-
-    @property
-    def max_temp(self):
-        return 24
-
-    @property
-    def min_temp(self):
-        return 10
-
-
-    @property
-    def _is_device_active(self):
-        return bool(self.temp_pos>0)
-
-    @property
-    def available(self):
-        return True
-
-    @property
-    def target_temperature(self):
-        _LOGGER.debug("target_temperature  heating_status=%s", self.coordinator.xc.heating_status)
-
-        if self._hvac_mode == HVAC_MODE_HEAT:
-            if self.coordinator.xc.heating_status!={}:
-                _status = self.coordinator.xc.heating_status[self._heating_zone]
-                if _status!={}:
-                    return float(_status['setpoint'])
-                else:
-                    return None
-            else:
-                return None
-
-    @property
-    def current_temperature(self):
+    @callback
+    def _update_attr(self) -> None:
+        _LOGGER.error("xTherm._update_attr start")
         if self._rm:
             try:
                 dev = next(x for x in self.coordinator.data if x['id']=='xCo:'+self.id+'_u12')
-                temp = float(dev['value'])
-                return temp
+                self._attr_current_temperature = float(dev['value'])
             except:
-                return None
+                self._attr_current_temperature = None
         else:
             try:
                 dev = next(x for x in self.coordinator.data if x['id']=='xCo:'+self.id+'_u0')
-                temp = float(dev['value'])
-                return temp
+                self._attr_current_temperature = float(dev['value'])
             except:
-                return None
+                self._attr_current_temperature = None
+
+        _heating_status = self.coordinator.xc.heating_status
+        #_LOGGER.error("xcThermostat._update_attr _heating_status=%s",_heating_status)
+
+        if _heating_status!={}:
+            _status = self.coordinator.xc.heating_status[self._heating_zone]
+
+            if _status!={}:
+                _heating = _status['heating']
+                if bool(_heating=='heating'):
+                    self._attr_hvac_mode = HVAC_MODE_HEAT
+                    self._attr_target_temperature= float(_status['setpoint'])
+                else:
+                    self._attr_hvac_mode = HVAC_MODE_OFF
+                    self._attr_target_temperature= None
+            else:
+                self._attr_target_temperature= None
+                self._attr_hvac_mode = None
+        else:
+            self._attr_target_temperature= None
+            self._attr_hvac_mode = None
 
     @property
-    def hvac_modes(self):
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
-
-    @property
-    def hvac_mode(self):
-        return self._hvac_mode
-
-    @property
-    def hvac_action(self):
-        if self._hvac_mode == HVAC_MODE_OFF:
-            return CURRENT_HVAC_OFF
-        if not self._is_device_active:
-            return CURRENT_HVAC_IDLE
-
-
-    @property
-    def state_attributes(self):
+    def extra_state_attributes(self):
         stats_id = str('xCo:'+self.id+'_vp').replace('xCo','hdm:xComfort Adapter')
         try:
             self.last_message_time = self.coordinator.xc.log_stats[stats_id]['lastMsgTimeStamp']
@@ -245,58 +211,6 @@ class xcThermostat(ClimateEntity):
                 self.temp_pos = 0
         return {'Messeges per day': self.messages_per_day, 'Last message': self.last_message_time, 'Position:': self.temp_pos}
 
-
-    async def async_set_temperature(self, **kwargs):
-        await self.coordinator.xc.set_temperture(self._heating_zone, kwargs.get(ATTR_TEMPERATURE))
-        self.async_write_ha_state()
-
-
-    async def async_set_hvac_mode(self, hvac_mode):
-        if hvac_mode == HVAC_MODE_HEAT:
-            _hvac_mode = True
-        else:
-            _hvac_mode = False
-
-        if await self.coordinator.xc.set_heatingmode(self._heating_zone, _hvac_mode):
-            self._hvac_mode = hvac_mode
-        else:
-            LOGGER.error("Can't set hvac mode %s", self._heating_zone)
-
-        #self.async_write_ha_state()
-
-
-
-
-
- #   def _update_internal_state(self):
-  #      _status = self.coordinator.xc.heating_status[self._heating_zone]
-   #     self._target_temp = float(_status['setpoint'])
-    #    _heating = _status['heating']
-
-    #    _LOGGER.error("async_update() zone=%s settemp=%s heating=%s",self._heating_zone, self._target_temp,_heating)
-     #   if bool(_heating=='heating'):
-      #      self._hvac_mode = HVAC_MODE_HEAT
-       # else:
-       #     self._hvac_mode = HVAC_MODE_OFF
-
-
-#    async def async_update(self):
-#
- #       _status = self.coordinator.xc.heating_status[self._heating_zone]
- #       self._target_temp = float(_status['setpoint'])
-  #      _heating = _status['heating']
-
-    #    _LOGGER.error("async_update() zone=%s settemp=%s heating=%s",self._heating_zone, self._target_temp,_heating)
-   #     if bool(_heating=='heating'):
-     #       self._hvac_mode = HVAC_MODE_HEAT
-      #  else:
-      #      self._hvac_mode = HVAC_MODE_OFF
-
-       # self.async_write_ha_state()
-
-
-    async def async_added_to_hass(self):
-        """Connect to dispatcher listening for entity data notifications."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
+##    @property
+##    def _is_device_active(self):
+##        return bool(self.temp_pos>0)

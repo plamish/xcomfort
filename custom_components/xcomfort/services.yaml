@@ -1,0 +1,3 @@
+save_status_files:
+  name: Save status files
+  description: Saves xcomfort_devices and xcomfort_log_stats in /config folder

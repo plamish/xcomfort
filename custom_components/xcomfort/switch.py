@@ -1,4 +1,4 @@
-###Version 1.3
+###Version 1.3.1
 from homeassistant.components.switch import SwitchEntity
 import json
 import logging
@@ -35,7 +35,7 @@ class xcSwitch(SwitchEntity):
         return self._unique_id
 
     @property
-    def state_attributes(self):
+    def extra_state_attributes(self):
         stats_id = str(self._unique_id).replace('xCo','hdm:xComfort Adapter')
         #_LOGGER.debug("xcSwitch.state_attributes() stats_id=%s", stats_id)
         try:
@@ -61,14 +61,9 @@ class xcSwitch(SwitchEntity):
     def available(self):
         return self.coordinator.last_update_success
 
-    async def asyn_update(self):
-        await self.coordinator.async_request_refresh()
-
     async def async_added_to_hass(self):
         """Connect to dispatcher listening for entity data notifications."""
-        self.async_on_remove(
-            self.coordinator.async_add_listener(self.async_write_ha_state)
-        )
+        self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
 
     async def async_turn_on(self, **kwargs):
         if await self.coordinator.xc.switch(self._unique_id,"on"):
