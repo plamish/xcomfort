@@ -13,6 +13,6 @@ Please note only devices from one SHC zone will be added to HA. For zone 1 use h
 
 To find zone number log into SHC via web console using this address http://ip_address_of_your_integration/system/console/config, go to Configuration Status -> Home Devices and use search function to search for 'hz_'. Number following hz_ is the zone number.
 
-The integration supports some of xComfort thermostats. Configuration is not straight forward and if you want to give try configure open an issue and I'll provide more guidline.
+The integration supports some of xComfort thermostats. Configuration is not straight forward and if you want to give a try configuring open an issue and I'll provide you instructions.
 
 <b>Warning</b>: This integration is not finshed and work is still in progress. All comments and feedback is welcomed
