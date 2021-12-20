@@ -27,6 +27,7 @@ async def async_setup_entry(hass, config_entry):
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "light"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))
+    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "button"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "cover"))
     hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "climate"))
 
