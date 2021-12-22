@@ -1,4 +1,4 @@
-###Version 1.3.1
+###Version 1.3.2
 import json
 import logging
 import asyncio
@@ -161,7 +161,6 @@ class xcThermostat(CoordinatorEntity, ClimateEntity):
 
     @callback
     def _update_attr(self) -> None:
-        _LOGGER.error("xTherm._update_attr start")
         if self._rm:
             try:
                 dev = next(x for x in self.coordinator.data if x['id']=='xCo:'+self.id+'_u12')
@@ -176,7 +175,6 @@ class xcThermostat(CoordinatorEntity, ClimateEntity):
                 self._attr_current_temperature = None
 
         _heating_status = self.coordinator.xc.heating_status
-        #_LOGGER.error("xcThermostat._update_attr _heating_status=%s",_heating_status)
 
         if _heating_status!={}:
             _status = self.coordinator.xc.heating_status[self._heating_zone]
