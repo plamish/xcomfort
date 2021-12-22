@@ -11,6 +11,7 @@ class xcomfortAPI:
         self.sessionID = ''
         self.session = session
         self.devices = {}
+        self.scenes = {}
         self.log_stats = {}
         self.zones_list = {}
         self.heating_zones = []
@@ -107,7 +108,9 @@ class xcomfortAPI:
     async def get_statuses(self):
         _LOGGER.debug("get_statuses() counter=%d, stat_interval=%d",self.update_counter,self.stat_interval)
         self.devices = await self.query('StatusControlFunction/getDevices', params=[self.zone, ''])
+        self.scenes = await self.query('SceneFunction/getScenes', params=[self.zone, ''])
         #_LOGGER.debug("get_statuses() self.devices=%s", self.devices)
+        #_LOGGER.debug("get_statuses() self.scenes=%s", self.scenes)
         if (self.update_counter <= 0) or self.stat_scan_now:
             _LOGGER.debug("get_statuses() update_counter <= 0")
             self.update_counter = self.stat_interval
@@ -136,6 +139,13 @@ class xcomfortAPI:
         else:
             return True
 
+    async def scene(self, scene_id):
+        result = await self.query('SceneFunction/triggerScene', params=[self.zone, scene_id])
+        if not result['status'] == 'ok':
+            return False
+        else:
+            return True
+            
     async def set_temperture(self, zone_id, temp):
         _LOGGER.debug("set_temperture %s %s ",zone_id,str(temp))
         result = await self.query('ClimateFunction/setSetpoint', [zone_id, str(temp)])
