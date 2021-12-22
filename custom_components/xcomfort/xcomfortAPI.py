@@ -1,4 +1,4 @@
-###Version 1.3.1
+###Version 1.3.2
 import logging
 import json
 import aiohttp
@@ -145,7 +145,7 @@ class xcomfortAPI:
             return False
         else:
             return True
-            
+
     async def set_temperture(self, zone_id, temp):
         _LOGGER.debug("set_temperture %s %s ",zone_id,str(temp))
         result = await self.query('ClimateFunction/setSetpoint', [zone_id, str(temp)])

@@ -1,4 +1,4 @@
-###Version 1.3.1
+###Version 1.3.2
 from homeassistant.components.button import ButtonEntity
 import json
 import logging
@@ -36,4 +36,4 @@ class xcScene(ButtonEntity):
         if await self.coordinator.xc.scene(self._unique_id):
             _LOGGER.debug("Scene %s activation success",self.name)
         else:
-            _LOGGER.debug("Scene %s activation unsucessful",self.name)        
+            _LOGGER.debug("Scene %s activation unsucessful",self.name)

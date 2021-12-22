@@ -1,4 +1,4 @@
-###Version 1.3.1
+###Version 1.3.2
 from homeassistant.const import CONF_NAME
 from homeassistant import config_entries
 import voluptuous as vol
