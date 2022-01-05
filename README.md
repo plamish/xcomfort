@@ -2,8 +2,8 @@
 # Eaton xComfort SHC integration for Home Assistance 
 
 ### Requirements :
-- [xComfort Smart Home Controller]https://www.eaton.com/bg/en-gb/catalog/residential/xcomfort-smart-home-controller.html
-- [Home Assistant]https://www.home-assistant.io/
+- [xComfort Smart Home Controller](https://www.eaton.com/bg/en-gb/catalog/residential/xcomfort-smart-home-controller.html)
+- [Home Assistant](https://www.home-assistant.io)
 
 
 ### Installation:
@@ -11,9 +11,7 @@
   2. In Configuration->Integrations add "XComfort SHC"
   3. Lights, switches, shutters and temperature sensors should appear in your HA
 
-or use [HACS](https://hacs.xyz/docs/setup/download "HACS") and add as custom repo.
-
-<b>Warning</b>: This integration is not finshed and work is still in progress. All comments and feedback is welcomed
+or use [HACS](https://hacs.xyz/docs/setup/download "HACS") and add as custom repository in integrations.
 
 ### Configuration
 
@@ -21,7 +19,7 @@ Please note only devices from one SHC zone will be added to HA. For zone 1 use h
 
 To find zone number log into SHC via web console using this address http://ip_address_of_your_integration/system/console/config, go to Configuration Status -> Home Devices and use search function to search for 'hz_'. Number following hz_ is the zone number.
 
-#### Limitations
+### Supported devices
 
 The integration supports today:
 - Switch actuators
@@ -35,10 +33,10 @@ The integration supports today:
 The integration polls updates from xComfort SHC to Home Assistant with user defined frequency. Work on push based status updates is in progress.
 
 
-#### xComfort to MQTT broker
+### xComfort to MQTT broker
 For instant, push based updates from xComfort SHC to Home Assistant you can try AppDaemon based [xcomfort2mqtt](https://github.com/plamish/xcomfort2mqtt "xcomfort2mqtt") . This can be useful if you want to trigger  Home Assistant automations from your xComfort devices
 
-#### Help and new ideas
+### Help and new ideas
 For help or question open an issue. For new ideas or comments open an discussion
 
 
