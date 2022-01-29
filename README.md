@@ -1,17 +1,14 @@
-
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs) 
 # Eaton xComfort SHC integration for Home Assistance 
+This is Eaton xComfort smart home and Home Assistance integration custom component
+
 
 ### Requirements :
 - [xComfort Smart Home Controller](https://www.eaton.com/bg/en-gb/catalog/residential/xcomfort-smart-home-controller.html)
 - [Home Assistant](https://www.home-assistant.io)
 
-
 ### Installation:
-  1. Copy all files to /custom_components/xcomfort and restart your HA
-  2. In Configuration->Integrations add "XComfort SHC"
-  3. Lights, switches, shutters and temperature sensors should appear in your HA
-
-or use [HACS](https://hacs.xyz/docs/setup/download "HACS") and add as custom repository in integrations.
+  Use [HACS](https://hacs.xyz/docs/setup/download "HACS") to install the integration
 
 ### Configuration
 
