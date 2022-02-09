@@ -1,4 +1,4 @@
-###Version 1.3.3
+###Version 1.3.2
 from homeassistant.components.light import (ATTR_BRIGHTNESS,ATTR_BRIGHTNESS_PCT, SUPPORT_BRIGHTNESS, LightEntity)
 import json
 import logging
@@ -109,14 +109,14 @@ class xcLight(LightEntity):
 
     async def async_turn_off(self, **kwargs):
         if self.type == 'DimActuator':
-            if await self.coordinator.xc.switch(self._unique_id,"off"):
+            if await self.coordinator.xc.switch(self._unique_id,"0"):
                 self.coordinator.data[self.id]['value']='0'
                 await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_off dimm %s success",self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsucessful",self.name)
         else:
-            if await self.coordinator.xc.switch(self._unique_id,"on"):
+            if await self.coordinator.xc.switch(self._unique_id,"off"):
                 self.coordinator.data[self.id]['value']="OFF"
                 await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_off %s success",self.name)
