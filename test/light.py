@@ -1,4 +1,4 @@
-###Version 1.3.3-TEST2
+###Version 1.3.3-TEST3
 from homeassistant.components.light import (ATTR_BRIGHTNESS,ATTR_BRIGHTNESS_PCT, SUPPORT_BRIGHTNESS, LightEntity)
 import json
 import logging
@@ -91,34 +91,30 @@ class xcLight(LightEntity):
         )
 
     async def async_turn_on(self, **kwargs):
-        if self.type == 'DimActuator':
-            if await self.coordinator.xc.switch(self._unique_id,"on"):
-                brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, 255) / 255)
-                self.coordinator.data[self.id]['value']=str(brightness)
-                await self.async_update_ha_state()
+        _LOGGER.debug("xcLight.turn_on kwargs %s",kwargs)
+        
+        if ATTR_BRIGHTNESS in kwargs:
+            brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, 255) / 255)
+            _LOGGER.debug("xcLight.turn_on brightness %s", brightness)
+            
+            if await self.coordinator.xc.switch(self._unique_id,str(brightness)):
+                #self.coordinator.data[self.id]['value']=str(brightness)
+                #await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_on dimm %s success",self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsucessful",self.name)
         else:
             if await self.coordinator.xc.switch(self._unique_id,"on"):
-                self.coordinator.data[self.id]['value']="ON"
-                await self.async_update_ha_state()
+                #self.coordinator.data[self.id]['value']="ON"
+                #await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_on %s success",self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on %s unsucessful",self.name)
 
     async def async_turn_off(self, **kwargs):
-        if self.type == 'DimActuator':
-            if await self.coordinator.xc.switch(self._unique_id,"off"):
-                self.coordinator.data[self.id]['value']='0'
-                await self.async_update_ha_state()
-                _LOGGER.debug("xcLight.turn_off dimm %s success",self.name)
-            else:
-                _LOGGER.debug("xcLight.turn_on dimm %s unsucessful",self.name)
+        if await self.coordinator.xc.switch(self._unique_id,"off"):
+            #self.coordinator.data[self.id]['value']='0'
+            #await self.async_update_ha_state()
+            _LOGGER.debug("xcLight.turn_off dimm %s success",self.name)
         else:
-            if await self.coordinator.xc.switch(self._unique_id,"off"):
-                self.coordinator.data[self.id]['value']="OFF"
-                await self.async_update_ha_state()
-                _LOGGER.debug("xcLight.turn_off %s success",self.name)
-            else:
-                _LOGGER.debug("xcLight.turn_off %s unsucessful",self.name)
+            _LOGGER.debug("xcLight.turn_on dimm %s unsucessful",self.name)
