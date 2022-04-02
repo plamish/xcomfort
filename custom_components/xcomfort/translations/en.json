@@ -2,7 +2,6 @@
   "config": {
     "step": {
       "user": {
-        "title": "XComfort SHC",
         "description": "Set up X-Comfort SHC",
         "data": {
           "url": "URL of SHC device",
