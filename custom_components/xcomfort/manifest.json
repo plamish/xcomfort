@@ -7,7 +7,5 @@
   "issue_tracker": "https://github.com/plamish/xcomfort/issues",
   "iot_class": "local_polling"
   "codeowners": ["@plamish"],
-  "requirements": [
-        "xcomfortshc==0.1"
-      ]
+  "requirements": ["xcomfortshc==0.1"]
 }
