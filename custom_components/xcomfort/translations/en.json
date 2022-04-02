@@ -6,7 +6,6 @@
         "description": "Set up X-Comfort SHC",
         "data": {
           "url": "URL of SHC device",
-          "name": "Name of integration",
           "username": "Login username",
           "password": "Login password",
           "zone": "Zone",

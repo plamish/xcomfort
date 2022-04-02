@@ -1,4 +1,4 @@
-###Version 1.3.2
+###Version 1.3.3
 import async_timeout
 import logging
 
@@ -7,7 +7,8 @@ from homeassistant.helpers import entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .xcomfortAPI import xcomfortAPI
+from xcomfortshc import xcomfortAPI
+#from .xcomfortAPI import xcomfortAPI
 
 from .const import DOMAIN, VERSION
 _LOGGER = logging.getLogger(__name__)
