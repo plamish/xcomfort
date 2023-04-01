@@ -24,9 +24,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         i += 1
 
 class xcShutter(CoverEntity):
-    
+
     _attr_supported_features = SUPPORT_CLOSE | SUPPORT_OPEN | SUPPORT_STOP | SUPPORT_OPEN_TILT | SUPPORT_CLOSE_TILT
-    
+
     def __init__(self, coordinator, id, unique_name, name ):
         self.id = id
         self._name = name
@@ -35,7 +35,6 @@ class xcShutter(CoverEntity):
         self._device_class = "shutter"
         self.last_message_time = ''
         self.messages_per_day = ''
-        self.status = ''
         _LOGGER.debug("xcShutter.init() %s", self.name)
 
     @property
@@ -48,7 +47,7 @@ class xcShutter(CoverEntity):
             if self.is_closed is True:
                 return "mdi:window-shutter"
             elif self.is_closed is False:
-                return "mdi:window-open"
+                return "mdi:window-shutter-open"
             else:
                 return "mdi:help-circle-outline"
         else:
@@ -56,7 +55,7 @@ class xcShutter(CoverEntity):
 
     @property
     def assumed_state(self):
-        return False
+        return True
 
     @property
     def unique_id(self):
@@ -65,7 +64,6 @@ class xcShutter(CoverEntity):
     @property
     def extra_state_attributes(self):
         stats_id = str(self._unique_id).replace('xCo','hdm:xComfort Adapter')
-        self.status = self.coordinator.data[self.id]['value'].lower()
         try:
             self.last_message_time = self.coordinator.xc.log_stats[stats_id]['lastMsgTimeStamp']
         except:
@@ -73,8 +71,7 @@ class xcShutter(CoverEntity):
             self.messages_per_day = ''
         else:
             self.messages_per_day = self.coordinator.xc.log_stats[stats_id]['msgsPerDay']
-        return {"Messages per day": self.messages_per_day, "Last message": self.last_message_time, "Status": self.status}
-
+        return {"Messages per day": self.messages_per_day, "Last message": self.last_message_time}
 
     @property
     def device_class(self):
@@ -82,7 +79,7 @@ class xcShutter(CoverEntity):
 
     @property
     def is_closed(self):
-        if self.coordinator.data[self.id]['value'].lower() == "opened ":
+        if self.coordinator.data[self.id]['value'].lower() == "opened":
             return False
         elif self.coordinator.data[self.id]['value'].lower() == "closed":
             return True
