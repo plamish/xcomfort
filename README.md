@@ -18,6 +18,8 @@ Please note only devices from one SHC zone will be added to HA. For zone 1 use h
 
 To find zone number log into SHC via web console using this address http://ip_address_of_your_integration/system/console/config, go to Configuration Status -> Home Devices and use search function to search for 'hz_'. Number following hz_ is the zone number.
 
+ > You can create a root zone that will contain all your devices. Add this one in HA to get all devices!
+
 ### Supported devices
 
 The integration supports today:
