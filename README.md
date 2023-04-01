@@ -7,6 +7,8 @@ This is Eaton xComfort smart home and Home Assistance integration custom compone
 - [xComfort Smart Home Controller](https://www.eaton.com/bg/en-gb/catalog/residential/xcomfort-smart-home-controller.html)
 - [Home Assistant](https://www.home-assistant.io)
 
+==It is recommended to set the language of your Smart Home Controller to english as some state descriptions are language dependent and this integration only supports the english values==
+
 ### Installation:
   Use [HACS](https://hacs.xyz/docs/setup/download "HACS") to install the integration
 
