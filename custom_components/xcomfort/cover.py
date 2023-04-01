@@ -3,6 +3,8 @@ from homeassistant.components.cover import (
     SUPPORT_CLOSE,
     SUPPORT_OPEN,
     SUPPORT_STOP,
+    SUPPORT_OPEN_TILT,
+    SUPPORT_CLOSE_TILT,
     CoverEntity,
 )
 
@@ -22,6 +24,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         i += 1
 
 class xcShutter(CoverEntity):
+    
+    _attr_supported_features = SUPPORT_CLOSE | SUPPORT_OPEN | SUPPORT_STOP | SUPPORT_OPEN_TILT | SUPPORT_CLOSE_TILT
+    
     def __init__(self, coordinator, id, unique_name, name ):
         self.id = id
         self._name = name
@@ -30,6 +35,7 @@ class xcShutter(CoverEntity):
         self._device_class = "shutter"
         self.last_message_time = ''
         self.messages_per_day = ''
+        self.status = ''
         _LOGGER.debug("xcShutter.init() %s", self.name)
 
     @property
@@ -39,20 +45,18 @@ class xcShutter(CoverEntity):
     @property
     def icon(self):
         if self.available:
-            is_closed = self.is_closed
-            
-            if is_closed:
+            if self.is_closed is True:
                 return "mdi:window-shutter"
-            elif is_close is False:
+            elif self.is_closed is False:
                 return "mdi:window-open"
             else:
-                return "mdi:window-shutter-alert"
+                return "mdi:help-circle-outline"
         else:
             return "mdi:exclamation-thick"
 
     @property
     def assumed_state(self):
-        return True
+        return False
 
     @property
     def unique_id(self):
@@ -61,6 +65,7 @@ class xcShutter(CoverEntity):
     @property
     def extra_state_attributes(self):
         stats_id = str(self._unique_id).replace('xCo','hdm:xComfort Adapter')
+        self.status = self.coordinator.data[self.id]['value'].lower()
         try:
             self.last_message_time = self.coordinator.xc.log_stats[stats_id]['lastMsgTimeStamp']
         except:
@@ -68,7 +73,7 @@ class xcShutter(CoverEntity):
             self.messages_per_day = ''
         else:
             self.messages_per_day = self.coordinator.xc.log_stats[stats_id]['msgsPerDay']
-        return {"Messeges per day": self.messages_per_day, "Last message": self.last_message_time}
+        return {"Messages per day": self.messages_per_day, "Last message": self.last_message_time, "Status": self.status}
 
 
     @property
@@ -104,6 +109,18 @@ class xcShutter(CoverEntity):
             _LOGGER.debug("xcShutter.stop %s success",self.name)
         else:
             _LOGGER.debug("xcShutter.stop %s unsucessful",self.name)
+            
+    async def async_open_cover_tilt(self, **kwargs):
+        if await self.coordinator.xc.switch(self._unique_id,"stepOpen"):
+            _LOGGER.debug("xcShutter.stepOpen %s success",self.name)
+        else:
+            _LOGGER.debug("xcShutter.stepOpen %s unsucessful",self.name)
+            
+    async def async_close_cover_tilt(self, **kwargs):
+        if await self.coordinator.xc.switch(self._unique_id,"stepClose"):
+            _LOGGER.debug("xcShutter.stepClose %s success",self.name)
+        else:
+            _LOGGER.debug("xcShutter.stepClose %s unsucessful",self.name)
 
     async def async_update(self):
         await self.coordinator.async_request_refresh()
