@@ -36,14 +36,17 @@ class xcShutter(CoverEntity):
     def name(self):
         return self._name
 
-
     @property
     def icon(self):
         if self.available:
-            if self.is_closed:
+            is_closed = self.is_closed
+            
+            if is_closed:
                 return "mdi:window-shutter"
+            elif is_close is False:
+                return "mdi:window-open"
             else:
-                return "mdi:window-shutter-open"
+                return "mdi:window-shutter-alert"
         else:
             return "mdi:exclamation-thick"
 
@@ -74,9 +77,9 @@ class xcShutter(CoverEntity):
 
     @property
     def is_closed(self):
-        if self.coordinator.data[self.id]['value'] == "OPENED":
+        if self.coordinator.data[self.id]['value'].lower() == "opened ":
             return False
-        elif self.coordinator.data[self.id]['value'] == "CLOSED":
+        elif self.coordinator.data[self.id]['value'].lower() == "closed":
             return True
         else:
             return None
