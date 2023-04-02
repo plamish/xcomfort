@@ -7,6 +7,8 @@ This is Eaton xComfort smart home and Home Assistance integration custom compone
 - [xComfort Smart Home Controller](https://www.eaton.com/bg/en-gb/catalog/residential/xcomfort-smart-home-controller.html)
 - [Home Assistant](https://www.home-assistant.io)
 
+ > It is recommended to set the language of your Smart Home Controller to english as some state descriptions are language dependent and this integration only supports the english values
+
 ### Installation:
   Use [HACS](https://hacs.xyz/docs/setup/download "HACS") to install the integration
 
@@ -15,6 +17,8 @@ This is Eaton xComfort smart home and Home Assistance integration custom compone
 Please note only devices from one SHC zone will be added to HA. For zone 1 use hz_1, for 2 use hz_2, etc.
 
 To find zone number log into SHC via web console using this address http://ip_address_of_your_integration/system/console/config, go to Configuration Status -> Home Devices and use search function to search for 'hz_'. Number following hz_ is the zone number.
+
+ > You can create a root zone that will contain all your devices. Add this one in HA to get all devices!
 
 ### Supported devices
 

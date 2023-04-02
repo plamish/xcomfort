@@ -3,6 +3,8 @@ from homeassistant.components.cover import (
     SUPPORT_CLOSE,
     SUPPORT_OPEN,
     SUPPORT_STOP,
+    SUPPORT_OPEN_TILT,
+    SUPPORT_CLOSE_TILT,
     CoverEntity,
 )
 
@@ -22,6 +24,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         i += 1
 
 class xcShutter(CoverEntity):
+
+    _attr_supported_features = SUPPORT_CLOSE | SUPPORT_OPEN | SUPPORT_STOP | SUPPORT_OPEN_TILT | SUPPORT_CLOSE_TILT
+
     def __init__(self, coordinator, id, unique_name, name ):
         self.id = id
         self._name = name
@@ -36,14 +41,15 @@ class xcShutter(CoverEntity):
     def name(self):
         return self._name
 
-
     @property
     def icon(self):
         if self.available:
-            if self.is_closed:
+            if self.is_closed is True:
                 return "mdi:window-shutter"
-            else:
+            elif self.is_closed is False:
                 return "mdi:window-shutter-open"
+            else:
+                return "mdi:help-circle-outline"
         else:
             return "mdi:exclamation-thick"
 
@@ -65,8 +71,7 @@ class xcShutter(CoverEntity):
             self.messages_per_day = ''
         else:
             self.messages_per_day = self.coordinator.xc.log_stats[stats_id]['msgsPerDay']
-        return {"Messeges per day": self.messages_per_day, "Last message": self.last_message_time}
-
+        return {"Messages per day": self.messages_per_day, "Last message": self.last_message_time}
 
     @property
     def device_class(self):
@@ -74,9 +79,9 @@ class xcShutter(CoverEntity):
 
     @property
     def is_closed(self):
-        if self.coordinator.data[self.id]['value'] == "OPENED":
+        if self.coordinator.data[self.id]['value'].lower() == "opened":
             return False
-        elif self.coordinator.data[self.id]['value'] == "CLOSED":
+        elif self.coordinator.data[self.id]['value'].lower() == "closed":
             return True
         else:
             return None
@@ -101,6 +106,18 @@ class xcShutter(CoverEntity):
             _LOGGER.debug("xcShutter.stop %s success",self.name)
         else:
             _LOGGER.debug("xcShutter.stop %s unsucessful",self.name)
+            
+    async def async_open_cover_tilt(self, **kwargs):
+        if await self.coordinator.xc.switch(self._unique_id,"stepOpen"):
+            _LOGGER.debug("xcShutter.stepOpen %s success",self.name)
+        else:
+            _LOGGER.debug("xcShutter.stepOpen %s unsucessful",self.name)
+            
+    async def async_close_cover_tilt(self, **kwargs):
+        if await self.coordinator.xc.switch(self._unique_id,"stepClose"):
+            _LOGGER.debug("xcShutter.stepClose %s success",self.name)
+        else:
+            _LOGGER.debug("xcShutter.stepClose %s unsucessful",self.name)
 
     async def async_update(self):
         await self.coordinator.async_request_refresh()
