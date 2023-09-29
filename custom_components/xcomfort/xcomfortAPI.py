@@ -1,4 +1,4 @@
-###Version 1.3.2
+###Version 1.3.4
 import logging
 import json
 import aiohttp

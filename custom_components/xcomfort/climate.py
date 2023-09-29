@@ -1,4 +1,4 @@
-###Version 1.3.3
+###Version 1.3.4
 import json
 import logging
 import asyncio

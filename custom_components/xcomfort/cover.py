@@ -1,4 +1,4 @@
-###Version 1.3.3
+###Version 1.3.4
 from homeassistant.components.cover import (
     SUPPORT_CLOSE,
     SUPPORT_OPEN,

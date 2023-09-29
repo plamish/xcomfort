@@ -1,4 +1,4 @@
-###Version 1.3.3
+###Version 1.3.4
 from homeassistant.components.button import ButtonEntity
 import json
 import logging

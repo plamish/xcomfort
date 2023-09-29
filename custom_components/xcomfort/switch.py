@@ -1,4 +1,4 @@
-###Version 1.3.3
+###Version 1.3.4
 from homeassistant.components.switch import SwitchEntity
 import json
 import logging

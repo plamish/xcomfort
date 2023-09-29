@@ -1,10 +1,12 @@
-###Version 1.3.3
+###Version 1.3.4
 from homeassistant.const import CONF_NAME
 from homeassistant import config_entries
 import voluptuous as vol
+import logging
 
 from .const import DOMAIN
 
+_LOGGER = logging.getLogger(__name__)
 
 DATA_SCHEMA = vol.Schema(
     {
@@ -32,12 +34,17 @@ DATA_SCHEMA = vol.Schema(
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     async def async_step_user(self, user_input=None):
+        _LOGGER.debug("ConfigFlow start")
+        
         errors = {}
+        
         if user_input is not None:
             await self.async_set_unique_id(
                     user_input["url"], raise_on_progress=False
                 )
+
             self._abort_if_unique_id_configured()
+
             return self.async_create_entry( title="xcomfort",  data=user_input,
                 )
         return self.async_show_form(
