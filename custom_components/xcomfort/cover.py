@@ -1,11 +1,7 @@
-###Version 1.3.4
+###Version 1.3.5
 from homeassistant.components.cover import (
-    SUPPORT_CLOSE,
-    SUPPORT_OPEN,
-    SUPPORT_STOP,
-    SUPPORT_OPEN_TILT,
-    SUPPORT_CLOSE_TILT,
     CoverEntity,
+    CoverEntityFeature,
 )
 
 import json
@@ -25,7 +21,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 class xcShutter(CoverEntity):
 
-    _attr_supported_features = SUPPORT_CLOSE | SUPPORT_OPEN | SUPPORT_STOP | SUPPORT_OPEN_TILT | SUPPORT_CLOSE_TILT
+    _attr_supported_features = (
+        CoverEntityFeature.CLOSE |
+        CoverEntityFeature.OPEN |
+        CoverEntityFeature.STOP |
+        CoverEntityFeature.OPEN_TILT |
+        CoverEntityFeature.CLOSE_TILT
+    )
 
     def __init__(self, coordinator, id, unique_name, name ):
         self.id = id
