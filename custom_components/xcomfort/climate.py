@@ -4,10 +4,10 @@ import logging
 import asyncio
 
 from homeassistant.core import callback
-from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity
+from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity, HVACMode, ClimateEntityFeature, HVACAction
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import UnitOfTemperature
 
 from homeassistant.const import (
     ATTR_ENTITY_ID,
@@ -26,20 +26,8 @@ from homeassistant.const import (
 
 from homeassistant.components.climate.const import (
     ATTR_PRESET_MODE,
-    CURRENT_HVAC_COOL,
-    CURRENT_HVAC_HEAT,
-    CURRENT_HVAC_IDLE,
-    CURRENT_HVAC_OFF,
-    HVAC_MODE_COOL,
-    HVAC_MODE_HEAT,
-    HVAC_MODE_OFF,
-    HVAC_MODE_AUTO,
-    HVAC_MODE_DRY,
-    HVAC_MODE_FAN_ONLY,
     PRESET_AWAY,
     PRESET_NONE,
-    SUPPORT_PRESET_MODE,
-    SUPPORT_TARGET_TEMPERATURE,
 )
 
 from .const import DOMAIN
@@ -107,9 +95,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class xcThermostat(CoordinatorEntity, ClimateEntity):
     _attr_target_temperature_step = PRECISION_HALVES
     _attr_hvac_mode= None
-    _attr_hvac_modes = [HVAC_MODE_HEAT, HVAC_MODE_OFF]
-    _attr_supported_features = SUPPORT_TARGET_TEMPERATURE
-    _attr_temperature_unit = TEMP_CELSIUS
+    _attr_hvac_modes = [HVACMode.HEAT, HVACMode.OFF]
+    _attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
+    _attr_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_max_temp = 24
     _attr_min_temp = 12
 
@@ -144,7 +132,7 @@ class xcThermostat(CoordinatorEntity, ClimateEntity):
         self.async_write_ha_state()
 
     async def async_set_hvac_mode(self, hvac_mode):
-        if hvac_mode == HVAC_MODE_HEAT:
+        if hvac_mode == HVACMode.HEAT:
             _hvac_mode = True
         else:
             _hvac_mode = False
@@ -182,10 +170,10 @@ class xcThermostat(CoordinatorEntity, ClimateEntity):
             if _status!={}:
                 _heating = _status['heating']
                 if bool(_heating=='heating'):
-                    self._attr_hvac_mode = HVAC_MODE_HEAT
+                    self._attr_hvac_mode = HVACMode.HEAT
                     self._attr_target_temperature= float(_status['setpoint'])
                 else:
-                    self._attr_hvac_mode = HVAC_MODE_OFF
+                    self._attr_hvac_mode = HVACMode.OFF
                     self._attr_target_temperature= None
             else:
                 self._attr_target_temperature= None

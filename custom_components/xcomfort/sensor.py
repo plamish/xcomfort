@@ -1,6 +1,6 @@
-###Version 1.3.4
+###Version 1.3.5
 from homeassistant.helpers.entity import Entity
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import UnitOfTemperature
 import json
 import logging
 import asyncio
@@ -24,7 +24,7 @@ class xcTemperature(Entity):
         self.id = id
         self._name = name
         self._unique_id = unique_name
-        self._unit_of_measurement = TEMP_CELSIUS
+        self._unit_of_measurement = UnitOfTemperature.CELSIUS
         self.coordinator = coordinator
         self.last_message_time = ''
         self.messages_per_day = ''
