@@ -1,4 +1,4 @@
-###Version 1.3.5
+###Version 1.3.6
 import async_timeout
 import logging
 
@@ -7,8 +7,8 @@ from homeassistant.helpers import entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from xcomfortshc import xcomfortAPI
-#from .xcomfortAPI import xcomfortAPI
+#from xcomfortshc import xcomfortAPI
+from .xcomfortAPI import xcomfortAPI
 
 from .const import DOMAIN, VERSION
 _LOGGER = logging.getLogger(__name__)
@@ -25,12 +25,12 @@ async def async_setup_entry(hass, config_entry):
     await coordinator.async_refresh()
     hass.data[DOMAIN] = coordinator
 
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "light"))
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "button"))
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "cover"))
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "climate"))
+    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
+    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "light"))
+    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))
+    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "button"))
+    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "cover"))
+    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "climate"))
 
     async def async_service1(service_call):
         await coordinator.xc.debug()
