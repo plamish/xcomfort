@@ -1,7 +1,8 @@
-###Version 1.3.5
+###Version 1.3.6
 import logging
 import json
 import aiohttp
+import aiofiles
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,14 +25,7 @@ class xcomfortAPI:
         self.stat_interval = stat_interval
         self.stat_scan_now = False
         self.is_connected = False
-        #try:
-        #    file = open("xcomfort_session","r")
-        #    self.sessionID = file.read()
-        #except IOError:
-        #    self.is_connected = False
-        #else:
-        #    file.close()
-        #    self.is_connected = True
+
 
     async def connect(self):
         _LOGGER.debug("connect()")
@@ -54,9 +48,8 @@ class xcomfortAPI:
                     x = sID.find("End")
                     self.sessionID = sID[0:x+3]
                     _LOGGER.debug('xcomfortAPI.connect() New sessionID = %s', self.sessionID)
-            file = open("xcomfort_session", "w")
-            file.write(self.sessionID)
-            file.close()
+            async with aiofiles.open("xcomfort_session", "w") as file:
+                await file.write(self.sessionID)
 
     async def query(self, method, params=['', '']):
         #_LOGGER.debug("query(%s)",method)
@@ -202,12 +195,10 @@ class xcomfortAPI:
         return bool(self.devices)
 
     async def debug(self):
-        file = open("xcomfort_devices", "w")
-        file.write(json.dumps(self.devices, indent=4))
-        file.close()
-        file = open("xcomfort_log_stats", "w")
-        file.write(json.dumps(self.log_stats, indent=4))
-        file.close()
+        async with aiofiles.open("xcomfort_devices", "w") as file:
+            await file.write(json.dumps(self.devices, indent=4))
+        async with aiofiles.open("xcomfort_log_stats", "w") as file:
+            await file.write(json.dumps(self.log_stats, indent=4))   
 
 class xcomfortAPIv2:
     def __init__(self, session: aiohttp.ClientSession ,url, zone, username, password, stat_interval):
