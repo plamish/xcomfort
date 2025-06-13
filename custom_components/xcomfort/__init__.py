@@ -25,12 +25,7 @@ async def async_setup_entry(hass, config_entry):
     await coordinator.async_refresh()
     hass.data[DOMAIN] = coordinator
 
-    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
-    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "light"))
-    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "switch"))
-    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "button"))
-    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "cover"))
-    await hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "climate"))
+    await hass.config_entries.async_forward_entry_setups(config_entry, ["sensor", "light", "switch", "button", "cover", "climate"])
 
     async def async_service1(service_call):
         await coordinator.xc.debug()
