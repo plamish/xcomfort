@@ -1,4 +1,4 @@
-###Version 1.3.6
+###Version 1.3.7
 import async_timeout
 import logging
 
